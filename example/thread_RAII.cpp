@@ -69,8 +69,62 @@ void TestLockGuard(int i){
     }
 }
 
+
+static mutex mux1;
+static mutex mux2;
+
+void TestScope1(){
+    // 模拟死锁 停100ms等另一个线程锁mux2
+    this_thread::sleep_for(100ms);
+    cout << this_thread::get_id() <<  "这是1 begin mux1 lock" << endl;
+    // mux1.lock();
+    cout << this_thread::get_id() <<  "这是1 begin mux2 lock" << endl;
+    // mux2.lock();
+
+    // lock(mux1,mux2);
+    // C++17
+    scoped_lock lock(mux1,mux2);
+
+    // 进入业务
+    cout << "TestScope1" << endl;
+    this_thread::sleep_for(1000ms);
+    mux1.unlock();
+    mux2.unlock();
+}
+
+
+void TestScope2(){
+    cout << this_thread::get_id() <<  "这是2 begin mux2 lock" << endl;
+    mux2.lock();
+    this_thread::sleep_for(100ms);
+    cout << this_thread::get_id() <<  "这是2 begin mux1 lock" << endl;
+    mux1.lock(); // 死锁
+    // 进入业务
+    cout << "TestScope2" << endl;
+    this_thread::sleep_for(1500ms);
+    mux1.unlock();
+    mux2.unlock();
+}
+
 int main(int argc,char *argv[]){
 
+
+    {
+        // 演示死锁情况
+        {
+            thread th(TestScope1);
+            th.detach();
+        }
+    }
+
+    {
+        {
+            thread th(TestScope2);
+            th.detach();
+        }
+    }
+
+    getchar();
 
     {
         // 共享锁
@@ -90,7 +144,9 @@ int main(int argc,char *argv[]){
 
 
     }
+
     getchar();
+
     {
         /**
          * unique_lock的特点
