@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/first_thread.dir/example/first_thread.cpp.o -o first_thread
