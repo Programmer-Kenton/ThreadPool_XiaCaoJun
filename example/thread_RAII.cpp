@@ -71,6 +71,47 @@ void TestLockGuard(int i){
 
 int main(int argc,char *argv[]){
 
+    {
+        /**
+         * unique_lock的特点
+         * 非独占所有权:与lock_guard不同 unique_lock可以在构造时不锁定互斥量 允许显示地决定何时锁定或解锁互斥量
+         * 可重入:unique_lock支持可重入的锁定行为 重复加锁
+         * 条件变量等待:可以与条件变量一起使用 以便在等待条件变量时保持互斥量的锁定状态
+         * 移动语义:支持移动构造和移动赋值 这使得可以将互斥量的所有权从一个std::unique_lock对象转移到另一个对象
+         */
+
+        static mutex mux;
+        unique_lock<mutex> lock(mux);
+        lock.unlock();
+        // 临时释放锁
+        lock.lock();
+    }
+
+    {
+        // 已经拥有锁 不锁定 退出解锁
+        mux.lock();
+        unique_lock<mutex> lock(mux,adopt_lock);
+    }
+
+    {
+        // 延后加锁 不拥有 退出不解锁
+        unique_lock<mutex> lock(mux,defer_lock);
+        // 加锁 退出栈区解锁
+        lock.lock();
+    }
+
+    {
+        // mux.lock();
+        // 尝试加锁 不阻塞 失败不拥有锁
+        unique_lock<mutex> lock(mux,try_to_lock);
+        if (lock.owns_lock()){
+            cout << "owns_lock" << endl;
+        }else{
+            cout << "not owns_lock" << endl;
+        }
+    }
+
+    getchar();
     for (int i = 0; i < 3; ++i) {
         thread th(TestLockGuard,i + 1);
         th.detach();
