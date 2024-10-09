@@ -6,3 +6,4 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(main main.cpp)
 
 add_executable(first_thread example/first_thread.cpp)
+add_executable(thread_para example/thread_para.cpp)
