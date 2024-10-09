@@ -46,7 +46,27 @@ void TestThread() {
     }
 }
 
+
+void ThreadMainMux(int i){
+    for(;;){
+        mtx.lock();
+        cout << i << "[in]" << endl;
+        this_thread::sleep_for(1000ms);
+        mtx.unlock();
+        // 留一部分时间给操作系统释放锁资源 不然释放后直接去获取 速度太快微秒级的 操作系统还没有真正释放锁
+        this_thread::sleep_for(1ms);
+    }
+}
+
 int main(int argc, char *argv[]) {
+
+
+    for (int i = 0; i < 3; ++i) {
+        thread th(ThreadMainMux,i + 1);
+        th.detach();
+    }
+
+    getchar();
     for (int i = 0; i < 10; ++i) {
         thread th(TestThread);
         th.detach();
