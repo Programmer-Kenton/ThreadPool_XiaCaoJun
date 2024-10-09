@@ -71,6 +71,26 @@ void TestLockGuard(int i){
 
 int main(int argc,char *argv[]){
 
+
+    {
+        // 共享锁
+        static shared_timed_mutex tmux;
+        // 读取锁 共享锁
+        {
+            // 调用共享锁
+            shared_lock<shared_timed_mutex> lock(tmux);
+            cout << "read data" << endl;
+            // 退出栈区 释放共享锁
+        }
+        // 写入锁 互斥锁
+        {
+            unique_lock<shared_timed_mutex> lock(tmux);
+            cout << "write data" << endl;
+        }
+
+
+    }
+    getchar();
     {
         /**
          * unique_lock的特点
