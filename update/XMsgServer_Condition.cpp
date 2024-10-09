@@ -6,7 +6,7 @@
  * @Author Kenton
  */
 
-#include "XMsgServer.h"
+#include "XMsgServer_Condition.h"
 
 using namespace std;
 using namespace this_thread;
@@ -16,17 +16,27 @@ void XMsgServer_Condition::SendMsg(std::string msg) {
     // 向List进行写操作前加锁
     std::unique_lock<std::mutex> lock(mux_);
     msgs_.push_back(msg);
+    lock.unlock();
+    cv.notify_one();
+    this_thread::sleep_for(3ms);
 }
 
 void XMsgServer_Condition::Main() {
     while (!is_exit()){
         // 加锁前睡眠
-        sleep_for(10ms);
+        // sleep_for(10ms);
         // 加锁后判断list容器是否为空
         std::unique_lock<std::mutex> lock(mux_);
-        if (msgs_.empty()){
-            continue;
-        }
+
+        cv.wait(lock,[this]{
+            cout << "wait cv" << endl;
+            if (is_exit()) return true;
+            return !msgs_.empty();
+        });
+
+//        if (msgs_.empty()){
+//            continue;
+//        }
 
         while (!msgs_.empty()){
             cout << "接收到消息... " << msgs_.front() << endl;
@@ -34,4 +44,10 @@ void XMsgServer_Condition::Main() {
             msgs_.pop_front();
         }
     }
+}
+
+void XMsgServer_Condition:: Stop() {
+    is_exit_ = true;
+    cv.notify_all();
+    Wait();
 }

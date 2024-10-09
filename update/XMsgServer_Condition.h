@@ -12,12 +12,15 @@
 #include <list>
 #include <mutex>
 #include <iostream>
-#include "XThread.h"
+#include <condition_variable>
+#include "XThread_Condition.h"
 
-class XMsgServer_Condition : public XThread{
+class XMsgServer_Condition : public XThread_Condition{
 public:
     // 给当前线程发送消息
     void SendMsg(std::string msg);
+
+    void Stop() override;
 
 private:
     // 处理消息的线程函数入口
@@ -28,6 +31,8 @@ private:
 
     // 互斥访问消息队列
     std::mutex mux_;
+
+    std::condition_variable cv;
 };
 
 

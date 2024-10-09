@@ -14,3 +14,13 @@ add_executable(thread_shared example/thread_shared.cpp)
 add_executable(thread_RAII example/thread_RAII.cpp)
 add_executable(thread_msg_server example/thread_msg_server.cpp example/XThread.h example/XThread.cpp example/XMsgServer.h example/XMsgServer.cpp)
 add_executable(condition_variable example/condition_variable.cpp)
+
+
+add_executable(
+        server_condition
+        update/thread_msg_server_condition.cpp
+        update/XMsgServer_Condition.h
+        update/XMsgServer_Condition.cpp
+        update/XThread_Condition.cpp
+        update/XThread_Condition.h
+)

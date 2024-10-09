@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "XMsgServer.h"
+#include "XMsgServer_Condition.h"
 
 using namespace std;
 
@@ -26,4 +26,5 @@ int main(int argc,char *argv[]){
     }
 
     server.Stop();
+    cout << "Server stopped..." << endl;
 }
