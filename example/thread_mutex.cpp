@@ -47,6 +47,7 @@ void TestThread() {
 }
 
 
+
 void ThreadMainMux(int i){
     for(;;){
         mtx.lock();
@@ -58,8 +59,65 @@ void ThreadMainMux(int i){
     }
 }
 
+timed_mutex tmux;
+
+void ThreadMainTime(int i){
+    for(;;){
+        if (!tmux.try_lock_for(chrono::microseconds(500))){
+            cout << i << "[try_lock_for timeout]" << endl;
+            continue;
+        }
+
+        cout << i << "[in]" << endl;
+        this_thread::sleep_for(2ms);
+        tmux.unlock();
+        // 睡眠一段时间 确保操作系统有时间真正释放锁资源
+        this_thread::sleep_for(1ms);
+    }
+}
+
+recursive_mutex rmux;
+
+void Task1(){
+    rmux.lock();
+    cout << "task1 [in]" << endl;
+    rmux.unlock();
+}
+
+void Task2(){
+    rmux.lock();
+    cout << "task2 [in]" << endl;
+    rmux.unlock();
+}
+
+void ThreadMainRec(int i){
+    for(;;){
+        rmux.lock();
+        Task1();
+        cout << i << "[in]" << endl;
+        this_thread::sleep_for(2000ms);
+        Task2();
+        rmux.unlock();
+        this_thread::sleep_for(1ms);
+    }
+}
+
 int main(int argc, char *argv[]) {
 
+    for (int i = 0; i < 3; ++i) {
+        thread th(ThreadMainRec,i + 1);
+        th.detach();
+    }
+
+    getchar();
+
+    for (int i = 0; i < 3; ++i) {
+        thread th(ThreadMainTime,i + 1);
+        th.detach();
+    }
+
+
+    getchar();
 
     for (int i = 0; i < 3; ++i) {
         thread th(ThreadMainMux,i + 1);
