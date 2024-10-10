@@ -21,9 +21,14 @@ public:
 
     std::function<bool()> is_exit = nullptr;
 
-    void SetValue(int value);
+    void SetValue(int value){
+        promise.set_value(value);
+    }
 
-    auto GetReturn();
+    auto GetReturn(){
+        // 阻塞等待 set_value
+        return promise.get_future().get();
+    }
 
 private:
     // 接收返回值

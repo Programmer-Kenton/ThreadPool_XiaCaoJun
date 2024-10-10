@@ -39,6 +39,8 @@ public:
 
     int task_run_count();
 
+    virtual ~threadPool();
+
 private:
     // 线程池的入口函数
     void Run();

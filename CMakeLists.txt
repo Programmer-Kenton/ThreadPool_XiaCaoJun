@@ -38,3 +38,17 @@ add_executable(threadPool
         threadPool/MyTask.h
         threadPool/MyTask.cpp
 )
+
+add_executable(
+        videoMain
+        threadPool/videoMain.cpp
+        threadPool/threadPool.h
+        threadPool/threadPool.cpp
+        threadPool/Task.h
+        threadPool/Task.cpp
+        threadPool/MyTask.h
+        threadPool/MyTask.cpp
+        threadPool/VideoTask.h
+        threadPool/VideoTask.cpp
+)
+

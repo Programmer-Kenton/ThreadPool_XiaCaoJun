@@ -111,4 +111,8 @@ int threadPool::task_run_count() {
     return task_run_count_;
 }
 
+threadPool::~threadPool() {
+    Stop();
+}
+
 
