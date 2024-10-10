@@ -14,6 +14,7 @@
 #include <vector>
 #include <list>
 #include <condition_variable>
+#include <atomic>
 #include "MyTask.h"
 
 class threadPool {
@@ -34,6 +35,8 @@ public:
 
     bool is_exit();
 
+    int task_run_count();
+
 private:
     // 线程池的入口函数
     void Run();
@@ -51,6 +54,9 @@ private:
 
     // 线程池退出标志
     bool is_exit_ = false;
+
+    // 正在运行的任务数量
+    std::atomic<int> task_run_count_ = {0};
 };
 
 

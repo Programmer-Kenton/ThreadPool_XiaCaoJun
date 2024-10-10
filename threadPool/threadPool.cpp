@@ -43,11 +43,15 @@ void threadPool::Run() {
         auto task = GetTask();
         if (!task) continue;
 
+        ++task_run_count_;
+
         try{
             task->Run();
         }catch (...){
 
         }
+
+        --task_run_count_;
 
     }
 
@@ -101,4 +105,8 @@ void threadPool::Stop() {
 
     unique_lock<mutex> lock(mtx);
     threads_.clear();
+}
+
+int threadPool::task_run_count() {
+    return task_run_count_;
 }

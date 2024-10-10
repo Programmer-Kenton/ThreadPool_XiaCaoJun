@@ -24,9 +24,21 @@ int main(int argc,char *argv[]){
 
     pool.AddTask(&task1);
 
+    MyTask task2;
+
+    task2.name = "test name 002";
+
+    pool.AddTask(&task2);
+
+    this_thread::sleep_for(100ms);
+
+    cout << "结束之前 task run count = " << pool.task_run_count();
+
     this_thread::sleep_for(1s);
 
     pool.Stop();
+
+    cout << "结束之后 task run count = " << pool.task_run_count();
 
     getchar();
     return 0;
