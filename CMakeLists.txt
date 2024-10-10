@@ -3,8 +3,6 @@ project(ThreadPool_XiaCaoJun)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(main main.cpp)
-
 add_executable(first_thread example/first_thread.cpp)
 add_executable(thread_para example/thread_para.cpp)
 add_executable(thread_para02 example/thread_para02.cpp)
@@ -30,3 +28,5 @@ add_executable(promise_future example/promise_future.cpp)
 add_executable(package_task example/package_task.cpp)
 add_executable(async_thread example/async_thread.cpp)
 add_executable(base_thread example/base16_thread.cpp)
+
+add_executable(threadPool threadPool/main.cpp threadPool/threadPool.h threadPool/threadPool.cpp)
