@@ -10,31 +10,33 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <execution>
+
 using namespace std;
 using namespace chrono;
 
 static const char base16[] = "0123456789abcdef";
 
-void Base16Encode(const unsigned char *data,int size,unsigned char *out){
+void Base16Encode(const unsigned char *data, int size, unsigned char *out) {
     for (int i = 0; i < size; ++i) {
         unsigned char d = data[i];
         // 0000 0000
         // 1234 5678
         char a = base16[d >> 4];
         char b = base16[d & 0x0F];
-        out[i*2] = a;
-        out[i*2+1] = b;
+        out[i * 2] = a;
+        out[i * 2 + 1] = b;
 
     }
 }
 
 // C++11 多核Base16编码
-void Base16EncodeThread(const vector<unsigned char> &data,vector<unsigned char> &out){
+void Base16EncodeThread(const vector<unsigned char> &data, vector<unsigned char> &out) {
     int size = data.size();
     int th_count = thread::hardware_concurrency(); // 系统支持的线程核心数
     // 切片数据
     int slice_count = size / th_count;
-    if (size < th_count){
+    if (size < th_count) {
         th_count = 1;
         slice_count = size;
     }
@@ -49,24 +51,24 @@ void Base16EncodeThread(const vector<unsigned char> &data,vector<unsigned char> 
         int count = slice_count;
 
         // 最后一个
-        if (th_count > 1 && i == th_count - 1){
+        if (th_count > 1 && i == th_count - 1) {
             count = slice_count + size % th_count;
         }
         cout << offset << ':' << count << endl;
-        ths[i] = thread(Base16Encode,data.data() + offset,count,out.data());
+        ths[i] = thread(Base16Encode, data.data() + offset, count, out.data());
     }
 
     // 等待所有线程处理结束
-    for(auto &th : ths){
+    for (auto &th: ths) {
         th.join();
     }
 }
 
 
-int main(int argc,char *argv[]){
+int main(int argc, char *argv[]) {
     string test_data = "测试base16编码";
     unsigned char out[1024] = {0};
-    Base16Encode((unsigned char*)test_data.data(),test_data.size(),out);
+    Base16Encode((unsigned char *) test_data.data(), test_data.size(), out);
     cout << "base16:" << out << endl;
 
     // 初始化测试数据
@@ -83,7 +85,7 @@ int main(int argc,char *argv[]){
     {
 
         auto start = system_clock::now();
-        Base16Encode(in_data.data(),in_data.size(),out_data.data());
+        Base16Encode(in_data.data(), in_data.size(), out_data.data());
         auto end = system_clock::now();
         auto duration = duration_cast<milliseconds>(end - start);
         // cout << out_data.data() << endl;
@@ -95,10 +97,31 @@ int main(int argc,char *argv[]){
     {
         cout << "测试C++11 多线程Base16编码 开始计算" << endl;
         auto start = system_clock::now();
-        Base16EncodeThread(in_data,out_data);
+        Base16EncodeThread(in_data, out_data);
         auto end = system_clock::now();
         auto duration = duration_cast<milliseconds>(end - start);
         cout << "编码: " << in_data.size() << "ms" << endl;
     }
+
+    // 测试C++17多线程base16编码
+    cout << "测试C++11 多线程Base16编码 开始计算" << endl;
+    auto start = system_clock::now();
+    unsigned char *idata = in_data.data();
+    unsigned char *odata = in_data.data();
+    std::for_each(std::execution::par,// 并行计算 多核
+                  in_data.begin(), in_data.end(),
+                  [&](auto &d) { // 多线程进入次函数
+                      char a = base16[(d >> 4)];
+                      char b = base16[(d & 0x0F)];
+                      int index = &d - idata;
+                      odata[index * 2] = a;
+                      odata[index * 2 + 1] = b;
+                  }
+    );
+
+    auto end = system_clock::now();
+    auto duration = duration_cast<milliseconds>(end - start);
+    cout << "编码: " << in_data.size() << " 字节数据花费" << double(duration.count()) << "ms" << endl;
+
     getchar();
 }
