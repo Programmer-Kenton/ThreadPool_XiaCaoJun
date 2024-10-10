@@ -28,3 +28,4 @@ add_executable(
 
 add_executable(promise_future example/promise_future.cpp)
 add_executable(package_task example/package_task.cpp)
+add_executable(async_thread example/async_thread.cpp)
