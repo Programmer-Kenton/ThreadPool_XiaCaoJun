@@ -24,3 +24,6 @@ add_executable(
         update/XThread_Condition.cpp
         update/XThread_Condition.h
 )
+
+
+add_executable(promise_future example/promise_future.cpp)
