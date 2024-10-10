@@ -12,6 +12,7 @@
 #include <mutex>
 #include <vector>
 #include <functional>
+#include <future>
 
 class Task {
 
@@ -19,6 +20,14 @@ public:
     virtual int Run() = 0;
 
     std::function<bool()> is_exit = nullptr;
+
+    void SetValue(int value);
+
+    auto GetReturn();
+
+private:
+    // 接收返回值
+    std::promise<int> promise;
 };
 
 

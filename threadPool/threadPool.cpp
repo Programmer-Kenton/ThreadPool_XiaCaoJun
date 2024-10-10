@@ -47,7 +47,9 @@ void threadPool::Run() {
         ++task_run_count_;
 
         try{
-            task->Run();
+            auto ret = task->Run();
+            task->SetValue(ret);
+
         }catch (...){
 
         }

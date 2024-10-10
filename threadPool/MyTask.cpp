@@ -21,4 +21,5 @@ int MyTask::Run() {
     }
     cout << endl;
     cout << "========================MyTask的Run函数运行结束============================" << endl;
+    return 100;
 }
