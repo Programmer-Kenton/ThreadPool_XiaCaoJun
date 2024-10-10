@@ -29,9 +29,11 @@ public:
     // 线程池的退出
     void Stop();
 
-    void AddTask(Task *task);
+    // void AddTask(Task *task);
+    void AddTask(std::shared_ptr<Task> task);
 
-    Task *GetTask();
+    // Task  *GetTask();
+    std::shared_ptr<Task> GetTask();
 
     bool is_exit();
 
@@ -46,9 +48,11 @@ private:
 
     std::mutex mtx;
 
-    std::vector<std::thread*> threads_;
+    // std::vector<std::thread*> threads_;
+    std::vector<std::shared_ptr<std::thread>> threads_;
 
-    std::list<Task*> tasks_;
+    // std::list<Task*> tasks_;
+    std::list<std::shared_ptr<Task>> tasks_;
 
     std::condition_variable cv;
 

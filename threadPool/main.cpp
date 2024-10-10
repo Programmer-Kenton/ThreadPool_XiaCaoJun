@@ -18,17 +18,21 @@ int main(int argc,char *argv[]){
 
     pool.Start();
 
-    MyTask task1;
+//    MyTask task1;
+//
+//    task1.name = "test name 001";
 
-    task1.name = "test name 001";
+    auto task3 = make_shared<MyTask>();
+    task3->name = "test shared 003";
+    pool.AddTask(task3);
 
-    pool.AddTask(&task1);
+//    MyTask task2;
+//
+//    task2.name = "test name 002";
 
-    MyTask task2;
-
-    task2.name = "test name 002";
-
-    pool.AddTask(&task2);
+    auto task4 = make_shared<MyTask>();
+    task4->name = "test shared 004";
+    pool.AddTask(task4);
 
     this_thread::sleep_for(100ms);
 

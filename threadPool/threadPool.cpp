@@ -31,7 +31,8 @@ void threadPool::Start() {
 
     // 启动线程
     for (int i = 0; i < thread_num; ++i) {
-        auto th = new thread(&threadPool::Run, this);
+        // auto th = new thread(&threadPool::Run, this);
+        auto th = make_shared<thread>(&threadPool::Run, this);
         threads_.push_back(th);
     }
 }
@@ -39,7 +40,7 @@ void threadPool::Start() {
 void threadPool::Run() {
     cout << "开始 threadPool Run" << this_thread::get_id() << endl;
 
-    while (true){
+    while (!is_exit_){
         auto task = GetTask();
         if (!task) continue;
 
@@ -58,7 +59,7 @@ void threadPool::Run() {
     cout << "结束 threadPool Run" << this_thread::get_id() << endl;
 }
 
-void threadPool::AddTask(Task *task) {
+void threadPool::AddTask(std::shared_ptr<Task> task) {
     unique_lock<mutex> lock(mtx);
 
     tasks_.push_back(task);
@@ -66,12 +67,9 @@ void threadPool::AddTask(Task *task) {
     task->is_exit = [this]{
         return is_exit_;
     };
-
-    lock.unlock();
-    cv.notify_one();
 }
 
-Task *threadPool::GetTask() {
+std::shared_ptr<Task> threadPool::GetTask() {
     unique_lock<mutex> lock(mtx);
 
     if (tasks_.empty()){
@@ -110,3 +108,5 @@ void threadPool::Stop() {
 int threadPool::task_run_count() {
     return task_run_count_;
 }
+
+
