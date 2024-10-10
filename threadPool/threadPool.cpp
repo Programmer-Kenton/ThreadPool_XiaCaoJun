@@ -59,6 +59,10 @@ void threadPool::AddTask(Task *task) {
 
     tasks_.push_back(task);
 
+    task->is_exit = [this]{
+        return is_exit_;
+    };
+
     lock.unlock();
     cv.notify_one();
 }
@@ -70,10 +74,31 @@ Task *threadPool::GetTask() {
         cv.wait(lock);
     }
 
+    // 如果线程被唤醒且被标记为退出状态则直接返回空
+    if (is_exit_) return nullptr;
+
     // notify_all一起唤醒其他线程消费任务 当前线程被唤醒可能没有任务 因此需要再判断任务是否为空
     if (tasks_.empty()) return nullptr;
 
     auto task = tasks_.front();
     tasks_.pop_front();
     return task;
+}
+
+bool threadPool::is_exit() {
+    return is_exit_;
+}
+
+void threadPool::Stop() {
+    is_exit_ = true;
+
+    cv.notify_all();
+
+    // 等待线程运行结束
+    for(auto &th : threads_){
+        th->join();
+    }
+
+    unique_lock<mutex> lock(mtx);
+    threads_.clear();
 }

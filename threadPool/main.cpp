@@ -9,6 +9,8 @@
 
 #include "threadPool.h"
 
+using namespace std;
+
 int main(int argc,char *argv[]){
     threadPool pool;
 
@@ -21,6 +23,10 @@ int main(int argc,char *argv[]){
     task1.name = "test name 001";
 
     pool.AddTask(&task1);
+
+    this_thread::sleep_for(1s);
+
+    pool.Stop();
 
     getchar();
     return 0;

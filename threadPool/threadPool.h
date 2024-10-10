@@ -25,9 +25,14 @@ public:
     // 启动所有线程池 必须先调用Init
     void Start();
 
+    // 线程池的退出
+    void Stop();
+
     void AddTask(Task *task);
 
     Task *GetTask();
+
+    bool is_exit();
 
 private:
     // 线程池的入口函数
@@ -43,6 +48,9 @@ private:
     std::list<Task*> tasks_;
 
     std::condition_variable cv;
+
+    // 线程池退出标志
+    bool is_exit_ = false;
 };
 
 

@@ -11,11 +11,14 @@
 #include <thread>
 #include <mutex>
 #include <vector>
+#include <functional>
 
 class Task {
 
 public:
     virtual int Run() = 0;
+
+    std::function<bool()> is_exit = nullptr;
 };
 
 

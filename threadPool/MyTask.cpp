@@ -12,5 +12,13 @@ using namespace std;
 int MyTask::Run() {
     cout << "========================多态实现MyTask的Run========================" << endl;
     cout << this_thread::get_id() << " MyTask" << name << endl;
-    cout << "========================Run函数允许结束============================" << endl;
+
+
+    for (int i = 0; i < 10; ++i) {
+        if (is_exit()) break;
+        cout << '.' << flush;
+        this_thread::sleep_for(500ms);
+    }
+    cout << endl;
+    cout << "========================MyTask的Run函数运行结束============================" << endl;
 }
