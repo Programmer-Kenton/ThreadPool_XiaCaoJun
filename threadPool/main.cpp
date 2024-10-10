@@ -16,5 +16,12 @@ int main(int argc,char *argv[]){
 
     pool.Start();
 
+    MyTask task1;
+
+    task1.name = "test name 001";
+
+    pool.AddTask(&task1);
+
+    getchar();
     return 0;
 }

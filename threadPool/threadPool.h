@@ -12,6 +12,9 @@
 #include <mutex>
 #include <iostream>
 #include <vector>
+#include <list>
+#include <condition_variable>
+#include "MyTask.h"
 
 class threadPool {
 
@@ -21,6 +24,10 @@ public:
 
     // 启动所有线程池 必须先调用Init
     void Start();
+
+    void AddTask(Task *task);
+
+    Task *GetTask();
 
 private:
     // 线程池的入口函数
@@ -32,6 +39,10 @@ private:
     std::mutex mtx;
 
     std::vector<std::thread*> threads_;
+
+    std::list<Task*> tasks_;
+
+    std::condition_variable cv;
 };
 
 

@@ -29,4 +29,12 @@ add_executable(package_task example/package_task.cpp)
 add_executable(async_thread example/async_thread.cpp)
 add_executable(base_thread example/base16_thread.cpp)
 
-add_executable(threadPool threadPool/main.cpp threadPool/threadPool.h threadPool/threadPool.cpp)
+add_executable(threadPool
+        threadPool/main.cpp
+        threadPool/threadPool.h
+        threadPool/threadPool.cpp
+        threadPool/Task.h
+        threadPool/Task.cpp
+        threadPool/MyTask.h
+        threadPool/MyTask.cpp
+)

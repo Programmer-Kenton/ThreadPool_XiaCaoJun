@@ -37,6 +37,43 @@ void threadPool::Start() {
 }
 
 void threadPool::Run() {
-    cout << "begin threadPool Run" << this_thread::get_id() << endl;
-    cout << "end threadPool Run" << this_thread::get_id() << endl;
+    cout << "开始 threadPool Run" << this_thread::get_id() << endl;
+
+    while (true){
+        auto task = GetTask();
+        if (!task) continue;
+
+        try{
+            task->Run();
+        }catch (...){
+
+        }
+
+    }
+
+    cout << "结束 threadPool Run" << this_thread::get_id() << endl;
+}
+
+void threadPool::AddTask(Task *task) {
+    unique_lock<mutex> lock(mtx);
+
+    tasks_.push_back(task);
+
+    lock.unlock();
+    cv.notify_one();
+}
+
+Task *threadPool::GetTask() {
+    unique_lock<mutex> lock(mtx);
+
+    if (tasks_.empty()){
+        cv.wait(lock);
+    }
+
+    // notify_all一起唤醒其他线程消费任务 当前线程被唤醒可能没有任务 因此需要再判断任务是否为空
+    if (tasks_.empty()) return nullptr;
+
+    auto task = tasks_.front();
+    tasks_.pop_front();
+    return task;
 }
