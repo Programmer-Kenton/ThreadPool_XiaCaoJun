@@ -69,6 +69,9 @@ void threadPool::AddTask(std::shared_ptr<Task> task) {
     task->is_exit = [this]{
         return is_exit_;
     };
+
+    lock.unlock();
+    cv.notify_one();
 }
 
 std::shared_ptr<Task> threadPool::GetTask() {

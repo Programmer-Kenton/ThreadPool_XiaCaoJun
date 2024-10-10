@@ -52,3 +52,7 @@ add_executable(
         threadPool/VideoTask.cpp
 )
 
+add_executable(
+        barrier_thread example/barrier_thread.cpp
+)
+

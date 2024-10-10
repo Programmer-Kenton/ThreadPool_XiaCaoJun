@@ -29,15 +29,43 @@ int main(int argc,char *argv[]){
 
     pool.Start();
 
-    auto task1 = make_shared<VideoTask>();
+    this_thread::sleep_for(200ms);
 
-    task1->in_path = "test.mp4";
-    task1->out_path = "640.mp4";
+    for(;;){
+       this_thread::sleep_for(200ms);
+       cout << "\n=========================================================" << endl;
+       auto task = make_shared<VideoTask>();
+       cout << "请输入命令(v e l) : ";
+       string cmd;
+       cin >> cmd;
+        if (cmd == "e"){
+            break;
+        } else if (cmd == "l"){
+            cout << "task run count = " << pool.task_run_count() << endl;
+            continue;
+        }
 
-    task1->width = 640;
-    task1->height = 480;
-    pool.AddTask(task1);
+        cout << "视频源: ";
+        cin >> task->in_path;
+        cout << "目标: ";
+        cin >> task->out_path;
+        cout << "输出宽: ";
+        cin >> task->width;
+        cout << "输出高: ";
+        cin >> task->height;
 
-    task1->GetReturn();
+        pool.AddTask(task);
+    }
+
+//    auto task1 = make_shared<VideoTask>();
+//
+//    task1->in_path = "test.mp4";
+//    task1->out_path = "640.mp4";
+//
+//    task1->width = 640;
+//    task1->height = 480;
+//    pool.AddTask(task1);
+//
+//    task1->GetReturn();
 
 }
